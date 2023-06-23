@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Alumno</title>
+        <meta charset="UTF-8">
+        <!-- css bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        
+       
+        <nav class="navbar navbar-dark bg-dark navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">CL1</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{listadoAlumno}">Alumnos </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{listadoCurso}">Cursos </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+      
+        
+        <br/>
+        
+        <div class="container">
+            <h2>Listado de Alumnos</h2>
+            <a class="btn btn-primary" th:href="@{/agregar}">Crear Alumno</a>           
+        </div>
+        
+        <br/>
+        <div class="container" th:if="${alumnos != null and !alumnos.empty}">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Accion</th>
+                    <th>Accion</th>
+                </tr>
+                </thead>               
+                <tr th:each="alumno:${alumnos}">
+                    <td th:text="${alumno.nom_alumno}">Mostrar nombre</td>
+                    <td th:text="${alumno.ape_alumno}">Mostrar apellido</td>
+                    <td th:text="${alumno.dni_alumno}">Mostrar DNI</td>
+                    <td th:text="${alumno.fecnac_alumno}">Mostrar Fecha nacimiento</td>
+                    <td> <a th:href="@{/editar/} + ${alumno.idAlumno}" th:text="Editar"> </a> </td>
+                    <td> <a th:href="@{/eliminar/} + ${alumno.idAlumno}" th:text="Eliminar"> </a> </td>
+                </tr>
+            </table>
+        </div>
+        <div th:if="${alumnos == null or alumnos.empty}">
+            La lista de alumno esta vacia
+        </div>
+        
+    </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+</html>
