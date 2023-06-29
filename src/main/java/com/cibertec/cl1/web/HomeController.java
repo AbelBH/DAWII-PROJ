@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *
@@ -53,20 +56,35 @@ public class HomeController {
     //Datos de la orden
     Orden orden = new Orden();
     
+    //links del servicio:
+    String URLlistadoProductos="http://localhost:8083/Producto/list/";
+    
+    
+    //RestTemplate
+    RestTemplate restTemplate = new RestTemplate();
+    
     @GetMapping("")
     public String home(Model model, HttpSession session) {
-        
-        model.addAttribute("productos", productoService.listarproductos());
+        ResponseEntity<Producto[]> responselistado = restTemplate.exchange(URLlistadoProductos, HttpMethod.GET,null,Producto[].class);
+        Producto[] productos = responselistado.getBody();
+        model.addAttribute("productos", productos/*productoService.listarproductos()*/);
         //session
         model.addAttribute("sesion", session.getAttribute("idusuario"));
         return "usuario/home";
     }
     
     @GetMapping("productohome/{id}")
-    public String productoHome(@PathVariable Integer id, Model model) {
-        Producto producto = new Producto();
-        Optional<Producto> productoOptional = productoService.get(id);
-        producto = productoOptional.get();
+    public String productoHome(@PathVariable("id") Integer id, Model model) {
+//        Producto producto = new Producto();
+//        Optional<Producto> productoOptional = productoService.get(id);
+//        producto = productoOptional.get();
+
+
+        String urlListadoProducto = URLlistadoProductos+id;
+         ResponseEntity<Producto> response = restTemplate.exchange(urlListadoProducto, HttpMethod.GET, null, Producto.class);
+        //se omiten los corchetes debido a que el registro encontrado SIEMPRE VA SER UNO SOLO
+        Producto producto = response.getBody();
+        
         model.addAttribute("producto", producto);
         return "usuario/productohome";
     }

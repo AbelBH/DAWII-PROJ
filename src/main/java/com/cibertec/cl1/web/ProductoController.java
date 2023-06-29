@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -33,6 +35,16 @@ public class ProductoController {
     
     @Autowired
     private ImagenService imagenService;
+    
+    //links del servicio:
+    String URLlistadoProductos="http://localhost:8083/Producto/list/";
+    String URLSaveProductos="http://localhost:8083/Producto/save/";
+    String URLDeleteProductos="http://localhost:8083/Producto/delete/";
+    
+    
+    //RestTemplate
+    RestTemplate restTempleate = new RestTemplate();
+    
     
     @GetMapping("")
     public String show(Model model) {
@@ -90,15 +102,30 @@ public class ProductoController {
         return "redirect:/productos";
     }
     
+//    @GetMapping("/delete/{id}")
+//    public String delete(Producto producto) {
+//        Producto p = new Producto();
+//        p=productoService.get(producto.getId()).get();
+//        if (!p.getImagen().equals("default.jpg")) {
+//            imagenService.deleteImage(p.getImagen());
+//        }
+//        productoService.eliminarProducto(producto);
+//        return "redirect:/productos";
+//    }
+    
     @GetMapping("/delete/{id}")
-    public String delete(Producto producto) {
+    public String delete(@PathVariable("id")Producto producto) {
         Producto p = new Producto();
         p=productoService.get(producto.getId()).get();
         if (!p.getImagen().equals("default.jpg")) {
             imagenService.deleteImage(p.getImagen());
         }
         
-        productoService.eliminarProducto(producto);
+        //
+        String urldelete=URLDeleteProductos+producto.getId();
+        restTempleate.delete(urldelete);
+        //
+     //   productoService.eliminarProducto(producto);
         return "redirect:/productos";
     }
 }
